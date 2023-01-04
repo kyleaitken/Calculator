@@ -10,8 +10,6 @@ const equals = document.querySelector('.equals');
 const clear = document.querySelector('.clear');
 const buttons = document.querySelectorAll('.button');
 
-// let opDisplayNum = '';
-//let currDisplayNum = '';
 let prevOp = null;
 let isFloat = false;
 let resultIsFloat = false;
@@ -52,7 +50,6 @@ function evaluate(input) {
                 } else {
                     opDisplay.innerText += (' ' + currNumber + ' ' + input);
                     if (result != null) {
-                        console.log("there's already a result");
                         processOperation();
                     } else {
                         if (isFloat) {
@@ -66,9 +63,10 @@ function evaluate(input) {
                     isFloat = false;
                     currDisplay.innerText = '0';
                     tempDisplay.innerText = result.toString();
-                    prevInput === 'operation'; 
+                    prevInput = 'operation'; 
                 }
             } else {
+                console.log(prevInput);
                 return; // bad input, two operations in a row
             }
 
@@ -76,10 +74,10 @@ function evaluate(input) {
             // its a number 
             if (input === '.') {
                 if (isFloat === true) {
-                    return // bad input, already has a dot, dont add 
+                    return 
                 } else {
                     // add to display
-                    currDisplay += input;
+                    currDisplay.innerText += input;
                     currNumber += input;
                     isFloat = true; 
                 }
@@ -106,7 +104,6 @@ function checkIfOperation(input) {
     for (let i=0; i<operations.length; i++) {
         if (operations[i].innerText.includes(input)) {
             isOperation = true;
-            console.log("It's a operand");
             break;
         }
     }
