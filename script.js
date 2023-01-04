@@ -1,9 +1,9 @@
 // Add button listeners
 // respond to click or keyboard input 
 
-const opDisplay = document.querySelector('.op-display');
-const currValue = document.querySelector('.curr-display');
-const tempDisplay = document.querySelector('.temp-display');
+let opDisplay = document.querySelector('.op-display');
+let currDisplay = document.querySelector('.curr-display');
+let tempDisplay = document.querySelector('.temp-display');
 const numbers = document.querySelectorAll('.number');
 const operations = document.querySelectorAll('.operation');
 const equals = document.querySelector('.equals');
@@ -12,7 +12,9 @@ const buttons = document.querySelectorAll('.button');
 
 // let opDisplayNum = '';
 //let currDisplayNum = '';
+let prevOp = null;
 let isFloat = false;
+let resultIsFloat = false;
 let prevInput = 'none';
 let result = null;
 let currNumber = '';
@@ -31,60 +33,68 @@ document.addEventListener('keydown', (e) => {
 // add listeners to button clicks and evaluate 
 buttons.forEach(button => {
     button.addEventListener('click', (e) => {
-        evaluate(e.target.innerText);
+        evaluate(e.target.innerText.toLowerCase());
     });
 });
 
 
 // Evaluates the input 
 function evaluate(input) {
-    if (checkIfOperation(input)) {
-        //its an operation
-        if (prevInput === 'number') {
-            // good to go, process
-            if (input === '=') {
-                // evaluate 
-                // clear display 
-            } else {
-                opDisplay += (input + ' ');
-                if (result != null) {
-                    processOperation(input);
-                } else {
-                    if (isFloat) {
-                        result = parseFloat(currNumber);
-                    } else {
-                        result = parseInt(currNumber);
-                    }
-                }
-                currNumber = '';
-                isFloat = false;
-                currValue = '';
-                tempDisplay = result.toString();
-                prevInput === 'operation'; 
-            }
-        } else {
-            return; // bad input, two operations in a row
-        }
-
+    console.log("evaluating: " + input);
+    if (input === 'c') {
+        clearDisplays();
     } else {
-        // its a number 
-        if (input === '.') {
-            if (isFloat === true) {
-                return // bad input, already has a dot, dont add 
+        if (checkIfOperation(input)) {
+            if (prevInput === 'number') {
+                if (input === '=') {
+                    // evaluate 
+                    // clear display 
+                } else {
+                    opDisplay.innerText += (' ' + currNumber + ' ' + input);
+                    if (result != null) {
+                        console.log("there's already a result");
+                        processOperation();
+                    } else {
+                        if (isFloat) {
+                            result = parseFloat(currNumber);
+                        } else {
+                            result = parseInt(currNumber);
+                        }
+                    }
+                    prevOp = input;
+                    currNumber = '';
+                    isFloat = false;
+                    currDisplay.innerText = '0';
+                    tempDisplay.innerText = result.toString();
+                    prevInput === 'operation'; 
+                }
             } else {
-                // add to display
-                currDisplayNum += input;
-                currNumber += input;
-                isFloat = true; 
+                return; // bad input, two operations in a row
             }
-        } else {
-            // add number to display(s)
-            currDisplayNum += input;
-            currNumber += input;
-        }
-        prevInput = 'number';
-    }
 
+        } else {
+            // its a number 
+            if (input === '.') {
+                if (isFloat === true) {
+                    return // bad input, already has a dot, dont add 
+                } else {
+                    // add to display
+                    currDisplay += input;
+                    currNumber += input;
+                    isFloat = true; 
+                }
+            } else {
+                // add number to display(s)
+                if (currDisplay.innerText === '0') {
+                    currDisplay.innerText = input;
+                } else {
+                    currDisplay.innerText += input;
+                }
+                currNumber += input;
+            }
+            prevInput = 'number';
+        }
+    }
 
 }
 
@@ -94,8 +104,9 @@ function evaluate(input) {
 function checkIfOperation(input) {
     let isOperation = false;
     for (let i=0; i<operations.length; i++) {
-        if (operations[i].innerHTML.includes(input)) {
+        if (operations[i].innerText.includes(input)) {
             isOperation = true;
+            console.log("It's a operand");
             break;
         }
     }
@@ -104,7 +115,8 @@ function checkIfOperation(input) {
 
 
 // adds the operation to displays 
-function processOperation(input) {
+function processOperation() {
+    //have result, currNumber, and prevOp
     var newVal;
     if (isFloat) {
         newVal = parseFloat(currNumber);
@@ -112,26 +124,25 @@ function processOperation(input) {
         newVal = parseInt(currNumber);
     }
 
-    if (input === '+') {
-        result += currNumber;
-    } else if (input === '-') {
-        result -= currNumber;
-    } else if (input === '/') {
-        result / currNumber;
-    } else if (input === 'x') {
-        result * currNumber;
-    } else if (input === 'c') {
-        clearDisplays();
-    }
-
+    if (prevOp === '+') {
+        result += newVal;
+    } else if (prevOp === '-') {
+        result -= newVal;
+    } else if (prevOp === '/') {
+        result /= newVal;
+    } else if (prevOp === 'x') {
+        result *= newVal;
+    } 
 }
 
 
 function clearDisplays() {
-    result = 0;
-    tempDisplay = '0';
-    currValue = '';
-    opDisplay = '';
+    prevOp = null;
+    result = null;
+    tempDisplay.innerText = '0';
+    currDisplay.innerText = '0';
+    opDisplay.innerText = '';
     isFloat = false;
+    resultIsFloat = false;
     prevInput = 'none';
 }

@@ -43,7 +43,7 @@ body {
     font-size: 30px;
 }
 
-.curr-result {
+.temp-display {
     position: absolute;
     opacity: 0.4;
     font-size: 20px;
