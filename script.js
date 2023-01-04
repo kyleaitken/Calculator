@@ -17,13 +17,15 @@ let prevInput = 'none';
 let result = null;
 let currNumber = '';
 
+const validNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+const validOps = ['enter', '=', 'c', '+', '-', 'x', '/'];
+
 // Add listeners to keys, evaluate if correct key is used 
 document.addEventListener('keydown', (e) => {
     let key = e.key.toLowerCase();
     if (key === 'enter') {
         evaluate('=');
-    } else if (key === '=' || key === '-' || key === '+' || key === '/' || key === 'x' || 
-    key === 'c' || key === '.' || (key >= '0' && key <= '9')) {
+    } else if (validNums.includes(key) || validOps.includes(key)) {
         evaluate(key);
     }
 }); 
@@ -98,20 +100,17 @@ function evaluate(input) {
 
 
 
-// Checks if the input is an operation value 
+// Checks if the input is an operand 
 function checkIfOperation(input) {
-    let isOperation = false;
-    for (let i=0; i<operations.length; i++) {
-        if (operations[i].innerText.includes(input)) {
-            isOperation = true;
-            break;
-        }
+    if (validOps.includes(input)) {
+        return true;
+    } else {
+        return false;
     }
-    return isOperation;
 }
 
 
-// adds the operation to displays 
+// processes the operation of the previous value and the current value
 function processOperation() {
     //have result, currNumber, and prevOp
     var newVal;
@@ -133,6 +132,8 @@ function processOperation() {
 }
 
 
+
+// clearDisplays() resets the values and clears the display 
 function clearDisplays() {
     prevOp = null;
     result = null;
