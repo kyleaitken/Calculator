@@ -1,6 +1,6 @@
-// Add button listeners
-// respond to click or keyboard input 
-
+/**
+* DOM Selectors
+*/
 let opDisplay = document.querySelector('.op-display');
 let currDisplay = document.querySelector('.curr-display');
 let tempDisplay = document.querySelector('.temp-display');
@@ -10,6 +10,9 @@ const equals = document.querySelector('.equals');
 const clear = document.querySelector('.clear');
 const buttons = document.querySelectorAll('.button');
 
+/*
+* Global Variables
+*/
 let prevOp = null;
 let isFloat = false;
 let resultIsFloat = false;
@@ -17,10 +20,16 @@ let prevInput = 'none';
 let result = null;
 let currNumber = '';
 
+/*
+* Valid key inputs 
+*/
 const validNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 const validOps = ['enter', '=', 'c', '+', '-', 'x', '/'];
 
-// Add listeners to keys, evaluate if correct key is used 
+
+/*
+* Listeners for button clicks or keypresses
+*/
 document.addEventListener('keydown', (e) => {
     let key = e.key.toLowerCase();
     if (key === 'enter') {
@@ -30,7 +39,6 @@ document.addEventListener('keydown', (e) => {
     }
 }); 
 
-// add listeners to button clicks and evaluate 
 buttons.forEach(button => {
     button.addEventListener('click', (e) => {
         evaluate(e.target.innerText.toLowerCase());
@@ -38,67 +46,80 @@ buttons.forEach(button => {
 });
 
 
-// Evaluates the input 
+// evaluate(input) evaluates the the input provided by the user based on it's type as
+//   either a number or operand 
 function evaluate(input) {
     console.log("evaluating: " + input);
     if (input === 'c') {
         clearDisplays();
     } else {
         if (isOperation(input)) {
-            if (prevInput === 'number') { // Make sure we're not getting 2 consecutive operations
-                opDisplay.innerText += (' ' + currNumber + ' ' + input);
-                if (result != null) {
-                    processOperation();
-                } else {
-                    if (isFloat) {
-                        result = parseFloat(currNumber);
-                    } else {
-                        result = parseInt(currNumber);
-                    }
-                }
-                prevOp = input;
-                currNumber = '';
-                isFloat = false;
-                currDisplay.innerText = '0';
-                tempDisplay.innerText = result.toString();
-                if (input === '=') {
-                    prevInput = 'number';
-                } else {
-                    prevInput = 'operation'; 
-                }
-            } else {
-                return; // bad input, two operations in a row
-            }
-
+            handleOperation(input);
         } else {
-            // its a number 
-            if (input === '.') {
-                if (isFloat === true) {
-                    return 
-                } else {
-                    // add to display
-                    currDisplay.innerText += input;
-                    currNumber += input;
-                    isFloat = true; 
-                }
-            } else {
-                // add number to display(s)
-                if (currDisplay.innerText === '0') {
-                    currDisplay.innerText = input;
-                } else {
-                    currDisplay.innerText += input;
-                }
-                currNumber += input;
-            }
-            prevInput = 'number';
+            handleNumber(input);
         }
     }
-
 }
 
 
+// handleOperation(input) processes the input provided if it was an operand. Returns if
+//   the previous input was an operand. If operand is '=', allows for next input to also
+//   be an operand
+function handleOperation(input) {
+    if (prevInput === 'number') { 
+        opDisplay.innerText += (' ' + currNumber + ' ' + input);
+        if (result != null) {
+            processOperation();
+        } else {
+            if (isFloat) {
+                result = parseFloat(currNumber);
+            } else {
+                result = parseInt(currNumber);
+            }
+        }
+        prevOp = input;
+        currNumber = '';
+        isFloat = false;
+        currDisplay.innerText = '0';
+        tempDisplay.innerText = result.toString();
+        if (input === '=') {
+            prevInput = 'number';
+        } else {
+            prevInput = 'operation'; 
+        }
+    } else {
+        return; // bad input, two operations in a row
+    }
+}
 
-// Checks if the input is an operand 
+
+// handleNumber(input) processes the input if it's a number value by adding it
+//   to the display and parsing it as a float value if needed 
+function handleNumber(input) {
+    if (input === '.') {
+        if (isFloat === true) {
+            return 
+        } else {
+            // add to display
+            currDisplay.innerText += input;
+            currNumber += input;
+            isFloat = true; 
+        }
+    } else {
+        // add number to display(s)
+        if (currDisplay.innerText === '0') {
+            currDisplay.innerText = input;
+        } else {
+            currDisplay.innerText += input;
+        }
+        currNumber += input;
+    }
+    prevInput = 'number';
+}
+
+
+// isOperation(input) checks if the input is an operand. Returns false if 
+//   it is a number
 function isOperation(input) {
     if (validOps.includes(input)) {
         return true;
@@ -108,7 +129,8 @@ function isOperation(input) {
 }
 
 
-// processes the operation of the previous value and the current value
+// processOperation() performs the operation on the previous number value and the 
+//   current number value
 function processOperation() {
     var newVal;
     if (isFloat) {
