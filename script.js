@@ -44,31 +44,29 @@ function evaluate(input) {
     if (input === 'c') {
         clearDisplays();
     } else {
-        if (checkIfOperation(input)) {
-            if (prevInput === 'number') {
-                if (input === '=') {
-                    // evaluate 
-                    // clear display 
+        if (isOperation(input)) {
+            if (prevInput === 'number') { // Make sure we're not getting 2 consecutive operations
+                opDisplay.innerText += (' ' + currNumber + ' ' + input);
+                if (result != null) {
+                    processOperation();
                 } else {
-                    opDisplay.innerText += (' ' + currNumber + ' ' + input);
-                    if (result != null) {
-                        processOperation();
+                    if (isFloat) {
+                        result = parseFloat(currNumber);
                     } else {
-                        if (isFloat) {
-                            result = parseFloat(currNumber);
-                        } else {
-                            result = parseInt(currNumber);
-                        }
+                        result = parseInt(currNumber);
                     }
-                    prevOp = input;
-                    currNumber = '';
-                    isFloat = false;
-                    currDisplay.innerText = '0';
-                    tempDisplay.innerText = result.toString();
+                }
+                prevOp = input;
+                currNumber = '';
+                isFloat = false;
+                currDisplay.innerText = '0';
+                tempDisplay.innerText = result.toString();
+                if (input === '=') {
+                    prevInput = 'number';
+                } else {
                     prevInput = 'operation'; 
                 }
             } else {
-                console.log(prevInput);
                 return; // bad input, two operations in a row
             }
 
@@ -101,7 +99,7 @@ function evaluate(input) {
 
 
 // Checks if the input is an operand 
-function checkIfOperation(input) {
+function isOperation(input) {
     if (validOps.includes(input)) {
         return true;
     } else {
@@ -112,7 +110,6 @@ function checkIfOperation(input) {
 
 // processes the operation of the previous value and the current value
 function processOperation() {
-    //have result, currNumber, and prevOp
     var newVal;
     if (isFloat) {
         newVal = parseFloat(currNumber);
@@ -143,4 +140,5 @@ function clearDisplays() {
     isFloat = false;
     resultIsFloat = false;
     prevInput = 'none';
+    currNumber = '';
 }
