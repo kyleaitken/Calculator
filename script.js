@@ -1,7 +1,6 @@
 /*
 To do:
-Add negative numbers
-Add backspace 
+Add delete function 
 Add max length of input
 */
 
