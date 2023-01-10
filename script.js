@@ -1,3 +1,10 @@
+/*
+To do:
+Add negative numbers
+Add backspace 
+Add max length of input
+*/
+
 /**
 * DOM Selectors
 */
@@ -19,12 +26,13 @@ let isFloat = false;
 let resultIsFloat = false;
 let result = null;
 let currNumber = '';
+let isNeg = false;
 
 /*
 * Valid key inputs 
 */
 const validNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
-const validOps = ['enter', '=', 'c', '+', '-', 'x', '/'];
+const validOps = ['enter', '=', 'c', '+', '-', 'x', '/', 'n', '+/-'];
 
 
 /*
@@ -34,6 +42,8 @@ document.addEventListener('keydown', (e) => {
     let key = e.key.toLowerCase();
     if (key === 'enter') {
         evaluate('=');
+    } else if (key === 'n') {
+        evaluate('+/-');
     } else if (validNums.includes(key) || validOps.includes(key)) {
         evaluate(key);
     }
@@ -52,6 +62,16 @@ function evaluate(input) {
     console.log("evaluating: " + input);
     if (input === 'c') {
         clearDisplays();
+    } else if (input === '+/-') {
+        if (isNeg) {
+            currNumber = currNumber.slice(1);
+            currDisplay.innerText = currDisplay.innerText.slice(1);
+            isNeg = false;
+        } else {
+            currNumber = '-' + currNumber;
+            currDisplay.innerText = '-' + currDisplay.innerText;
+            isNeg = true;
+        }
     } else {
         if (isOperation(input)) {
             handleOperation(input);
@@ -170,4 +190,5 @@ function clearDisplays() {
     isFloat = false;
     resultIsFloat = false;
     currNumber = '';
+    isNeg = false;
 }

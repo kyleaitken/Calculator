@@ -83,13 +83,21 @@ button:active {
     background-color: orange;
 }
 
-.clear {
-    width: 160px;
+.bottom.operation {
+    width: 120px;
     height: 50px;
     margin: auto;
     margin-top: 5px;
     padding: 5px;
     background-color: rgb(224, 58, 58);
+}
+
+.bottom.toggle-neg {
+    background-color: rgb(59, 213, 187);
+}
+
+.operation {
+    background-color: orange;
 }
 
 
