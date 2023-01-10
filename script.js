@@ -14,9 +14,9 @@ const buttons = document.querySelectorAll('.button');
 * Global Variables
 */
 let prevOp = null;
+let prevInputWasOperation = null;
 let isFloat = false;
 let resultIsFloat = false;
-let prevInput = 'none';
 let result = null;
 let currNumber = '';
 
@@ -66,7 +66,7 @@ function evaluate(input) {
 //   the previous input was an operand. If operand is '=', allows for next input to also
 //   be an operand
 function handleOperation(input) {
-    if (prevInput === 'number') { 
+    if (!prevInputWasOperation) { 
         opDisplay.innerText += (' ' + currNumber + ' ' + input);
         if (result != null) {
             processOperation();
@@ -77,15 +77,16 @@ function handleOperation(input) {
                 result = parseInt(currNumber);
             }
         }
+        // Reset values
         prevOp = input;
         currNumber = '';
         isFloat = false;
         currDisplay.innerText = '0';
         tempDisplay.innerText = result.toString();
         if (input === '=') {
-            prevInput = 'number';
+            prevInputWasOperation = false;
         } else {
-            prevInput = 'operation'; 
+            prevInputWasOperation = true; 
         }
     } else {
         return; // bad input, two operations in a row
@@ -96,9 +97,15 @@ function handleOperation(input) {
 // handleNumber(input) processes the input if it's a number value by adding it
 //   to the display and parsing it as a float value if needed 
 function handleNumber(input) {
+    // Handle div by 0
+    if (input === '0' && prevInputWasOperation && prevOp === '/') {
+        alert("You can't divide by 0");
+        return;
+    } 
+
     if (input === '.') {
         if (isFloat === true) {
-            return 
+            return // can't have 2 '.' in a value 
         } else {
             // add to display
             currDisplay.innerText += input;
@@ -114,7 +121,7 @@ function handleNumber(input) {
         }
         currNumber += input;
     }
-    prevInput = 'number';
+    prevInputWasOperation = false;
 }
 
 
@@ -155,12 +162,12 @@ function processOperation() {
 // clearDisplays() resets the values and clears the display 
 function clearDisplays() {
     prevOp = null;
+    prevInputWasOperation = null;
     result = null;
     tempDisplay.innerText = '0';
     currDisplay.innerText = '0';
     opDisplay.innerText = '';
     isFloat = false;
     resultIsFloat = false;
-    prevInput = 'none';
     currNumber = '';
 }
